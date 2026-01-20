@@ -142,13 +142,21 @@ elif menu == "EDA":
             else:
                 st.success("No se encontraron valores faltantes")
 
-        # TAB 4 — UNIVARIADO
+              # TAB 4 — UNIVARIADO
         with tabs[3]:
             st.subheader("Análisis univariado")
 
             var_num = st.selectbox("Variable numérica", numericas)
+
+            bins = st.slider(
+                "Número de bins del histograma",
+                min_value=5,
+                max_value=50,
+                value=30
+            )
+
             fig, ax = plt.subplots()
-            sns.histplot(df[var_num], bins=30, ax=ax)
+            sns.histplot(df[var_num], bins=bins, ax=ax)
             st.pyplot(fig)
 
             var_cat = st.selectbox("Variable categórica", categoricas)
@@ -183,6 +191,7 @@ elif menu == "EDA":
             4. Servicios adicionales reducen el churn.
             5. El EDA permite identificar patrones críticos de negocio.
             """)
+
 
 
 elif menu == "Conclusiones":
