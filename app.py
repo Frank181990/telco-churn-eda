@@ -33,12 +33,33 @@ menu = st.sidebar.radio(
 )
 
 if menu == "Home":
-    st.subheader("Bienvenido al proyecto")
-    st.write("""
-    Este proyecto tiene como objetivo realizar un Análisis Exploratorio de Datos (EDA)
-    sobre el comportamiento de los clientes de una empresa de telecomunicaciones,
-    con el fin de identificar patrones asociados a la fuga de clientes (churn).
+    st.title("Análisis Exploratorio de Datos - Telco Customer Churn")
+
+    st.markdown("""
+    ### 📌 Objetivo del proyecto
+    Desarrollar una aplicación interactiva en Streamlit para realizar un Análisis Exploratorio
+    de Datos (EDA) sobre el comportamiento de clientes de una empresa de telecomunicaciones,
+    identificando patrones asociados a la fuga de clientes (Churn).
+
+    ### 👤 Autor
+    **Nombre:** Frank Bellido
+    **Curso:** Especialización en Python for Analytics  
+    **Docente:** Carlos Carrillo Villavicencio  
+    **Año:** 2026
+
+    ### 📊 Dataset
+    El dataset **TelcoCustomerChurn.csv** contiene información sobre clientes, servicios
+    contratados, facturación, tiempo de permanencia y estado de churn.
+
+    ### 🛠 Tecnologías utilizadas
+    - Python
+    - Pandas
+    - NumPy
+    - Matplotlib
+    - Seaborn
+    - Streamlit
     """)
+
 
 elif menu == "Carga de Datos":
     st.subheader("Carga del Dataset")
