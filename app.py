@@ -92,176 +92,97 @@ elif menu == "EDA":
         st.warning("Primero debe cargar el dataset")
     else:
         df = st.session_state["df"]
-
-        st.write("Dimensiones del dataset:")
-        st.write(df.shape)
-
-        st.subheader("Primeras filas")
-        st.dataframe(df.head())
-
-        st.subheader("Información general del dataset")
-
-        buffer = StringIO()
-        df.info(buf=buffer)
-        info_text = buffer.getvalue()
-
-        st.text(info_text)
-
-        st.subheader("Valores nulos por columna")
-        st.dataframe(df.isnull().sum())
-
-        st.subheader("Clasificación de variables")
-
         analyzer = DataAnalyzer(df)
         numericas, categoricas = analyzer.clasificar_variables()
 
-        col1, col2 = st.columns(2)
+        tabs = st.tabs([
+            "📄 Info general",
+            "📊 Estadísticas",
+            "🔍 Valores faltantes",
+            "📈 Univariado",
+            "🔄 Bivariado",
+            "🧠 Hallazgos"
+        ])
 
-        with col1:
-            st.write("Variables numéricas")
-            st.write(f"Total: {len(numericas)}")
-            st.write(numericas)
+        # TAB 1 — INFO GENERAL
+        with tabs[0]:
+            st.subheader("Información general del dataset")
 
-        with col2:
-            st.write("Variables categóricas")
-            st.write(f"Total: {len(categoricas)}")
-            st.write(categoricas)
-        
-        st.subheader("Estadísticas descriptivas de variables numéricas")
+            st.write("Dimensiones:")
+            st.write(df.shape)
 
-        st.dataframe(analyzer.estadisticas_descriptivas())
+            st.dataframe(df.head())
 
-        st.subheader("Análisis de valores faltantes")
+            buffer = StringIO()
+            df.info(buf=buffer)
+            st.text(buffer.getvalue())
 
-        nulos = analyzer.valores_nulos()
-        st.dataframe(nulos)
+            col1, col2 = st.columns(2)
+            with col1:
+                st.write("Variables numéricas")
+                st.write(numericas)
+            with col2:
+                st.write("Variables categóricas")
+                st.write(categoricas)
 
+        # TAB 2 — ESTADÍSTICAS
+        with tabs[1]:
+            st.subheader("Estadísticas descriptivas")
+            st.dataframe(analyzer.estadisticas_descriptivas())
 
-        st.subheader("Visualización de valores faltantes")
+        # TAB 3 — VALORES FALTANTES
+        with tabs[2]:
+            st.subheader("Valores faltantes")
+            nulos = analyzer.valores_nulos()
+            st.dataframe(nulos)
 
-        nulos_filtrados = nulos[nulos > 0]
+            nulos_filtrados = nulos[nulos > 0]
+            if len(nulos_filtrados) > 0:
+                st.bar_chart(nulos_filtrados)
+            else:
+                st.success("No se encontraron valores faltantes")
 
-        if len(nulos_filtrados) == 0:
-            st.write("No se encontraron valores faltantes en el dataset.")
-        else:
-            st.bar_chart(nulos_filtrados)
+        # TAB 4 — UNIVARIADO
+        with tabs[3]:
+            st.subheader("Análisis univariado")
 
-        st.subheader("Distribución de variables numéricas")
+            var_num = st.selectbox("Variable numérica", numericas)
+            fig, ax = plt.subplots()
+            sns.histplot(df[var_num], bins=30, ax=ax)
+            st.pyplot(fig)
 
-        st.write("Distribución de tenure")
+            var_cat = st.selectbox("Variable categórica", categoricas)
+            fig, ax = plt.subplots()
+            sns.countplot(data=df, x=var_cat, ax=ax)
+            ax.tick_params(axis='x', rotation=45)
+            st.pyplot(fig)
 
-        st.bar_chart(
-            df["tenure"].value_counts().sort_index()
-        )
+        # TAB 5 — BIVARIADO
+        with tabs[4]:
+            st.subheader("Análisis bivariado")
 
-        st.write("Distribución de MonthlyCharges")
+            var_num = st.selectbox("Numérica vs Churn", numericas)
+            fig, ax = plt.subplots()
+            sns.boxplot(data=df, x="Churn", y=var_num, ax=ax)
+            st.pyplot(fig)
 
-        st.bar_chart(
-            df["MonthlyCharges"].value_counts().sort_index()
-        )
+            var_cat = st.selectbox("Categórica vs Churn", categoricas)
+            fig, ax = plt.subplots()
+            sns.countplot(data=df, x=var_cat, hue="Churn", ax=ax)
+            ax.tick_params(axis='x', rotation=45)
+            st.pyplot(fig)
 
-        st.write("Distribución de SeniorCitizen")
+        # TAB 6 — HALLAZGOS
+        with tabs[5]:
+            st.markdown("""
+            ### Hallazgos clave
 
-        st.bar_chart(
-            df["SeniorCitizen"].value_counts()
-        )
-
-        st.subheader("Análisis de la variable Churn")
-
-        churn_counts = df["Churn"].value_counts()
-
-        st.write("Conteo de clientes según Churn:")
-        st.write(churn_counts)
-
-        fig, ax = plt.subplots()
-        sns.countplot(data=df, x="Churn", ax=ax)
-        ax.set_title("Distribución de Churn")
-
-        st.pyplot(fig)
-
-        st.subheader("Análisis bivariado: Tenure vs Churn")
-
-        fig, ax = plt.subplots()
-        sns.boxplot(data=df, x="Churn", y="tenure", ax=ax)
-        ax.set_title("Tenure según estado de Churn")
-
-        st.pyplot(fig)
-
-        st.write("Estadísticas descriptivas de tenure según Churn:")
-        st.write(df.groupby("Churn")["tenure"].describe())
-
-        st.subheader("Análisis bivariado: MonthlyCharges vs Churn")
-
-        fig, ax = plt.subplots()
-        sns.boxplot(data=df, x="Churn", y="MonthlyCharges", ax=ax)
-        ax.set_title("Cargos mensuales según estado de Churn")
-
-        st.pyplot(fig)
-
-        st.write("Estadísticas descriptivas de MonthlyCharges según Churn:")
-        st.write(df.groupby("Churn")["MonthlyCharges"].describe())
-
-        st.subheader("Análisis dinámico según variable seleccionada")
-
-        numeric_cols = df.select_dtypes(include=["int64", "float64"]).columns.tolist()
-
-
-        selected_var = st.selectbox(
-        "Selecciona una variable numérica para analizar vs Churn:",
-        numeric_cols
-        )
-
-        fig, ax = plt.subplots()
-        sns.boxplot(data=df, x="Churn", y=selected_var, ax=ax)
-        ax.set_title(f"{selected_var} según estado de Churn")
-
-        st.pyplot(fig)
-
-        st.subheader("Análisis de variables categóricas")
-
-        cat_var = st.selectbox(
-        "Selecciona una variable categórica",
-        categoricas
-            )
-
-        conteo = df[cat_var].value_counts()
-
-        st.write(f"Conteo de {cat_var}:")
-        st.dataframe(conteo)
-
-        fig, ax = plt.subplots()
-        sns.countplot(data=df, x=cat_var, ax=ax)
-        ax.set_title(f"Distribución de {cat_var}")
-        ax.tick_params(axis='x', rotation=45)
-
-        st.pyplot(fig)
-
-        st.subheader("Análisis bivariado: Variable categórica vs Churn")
-
-        cat_var2 = st.selectbox(
-        "Selecciona una variable categórica para comparar con Churn",
-        categoricas
-        )
-
-        fig, ax = plt.subplots()
-        sns.countplot(data=df, x=cat_var2, hue="Churn", ax=ax)
-        ax.set_title(f"{cat_var2} vs Churn")
-        ax.tick_params(axis='x', rotation=45)
-
-        st.pyplot(fig)
-
-        st.subheader("Hallazgos clave del análisis exploratorio")
-
-        st.markdown("""
-**Principales hallazgos:**
-
-1. La mayoría de los clientes que presentan churn tienen una baja antigüedad, lo que indica que el abandono ocurre principalmente en los primeros meses.
-2. Los clientes con cargos mensuales más elevados muestran una mayor tendencia a abandonar el servicio.
-3. La base de clientes está compuesta mayoritariamente por usuarios que no pertenecen al grupo SeniorCitizen.
-4. El churn representa una proporción relevante del total de clientes, lo que puede impactar negativamente en los ingresos de la empresa.
-5. El análisis interactivo confirma que distintas variables numéricas presentan comportamientos diferenciados según el estado de churn.
-""")
-
+            1. El churn se concentra en clientes con baja antigüedad.
+            2. Cargos mensuales altos se asocian a mayor abandono.
+            3. El tipo de contrato influye en la retención.
+            4. Servicios adicionales reducen el churn.
+            5. El EDA permite identificar patrones críticos de negocio.
+            """)
 
 
 elif menu == "Conclusiones":
