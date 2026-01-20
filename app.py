@@ -1,9 +1,21 @@
 import streamlit as st
 import pandas as pd
-from io import StringIO
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from io import StringIO
 
+# ---------------------------
+# CONFIGURACIÓN GENERAL
+# ---------------------------
+st.set_page_config(
+    page_title="EDA Telco Customer Churn",
+    layout="wide"
+)
+
+# ---------------------------
+# CLASE POO
+# ---------------------------
 class DataAnalyzer:
     def __init__(self, df):
         self.df = df
@@ -19,39 +31,48 @@ class DataAnalyzer:
     def estadisticas_descriptivas(self):
         return self.df.describe()
 
-def clasificar_variables(df):
-    numericas = df.select_dtypes(include=["int64", "float64"]).columns.tolist()
-    categoricas = df.select_dtypes(include=["object"]).columns.tolist()
-    return numericas, categoricas
+    def media(self, col):
+        return self.df[col].mean()
+
+    def mediana(self, col):
+        return self.df[col].median()
+
+    def moda(self, col):
+        return self.df[col].mode()[0]
 
 
-st.title("Proyecto EDA - Telco Customer Churn")
-
+# ---------------------------
+# SIDEBAR
+# ---------------------------
+st.sidebar.title("📊 Menú")
 menu = st.sidebar.radio(
-    "Menú",
+    "Seleccione una opción",
     ["Home", "Carga de Datos", "EDA", "Conclusiones"]
 )
 
+# ---------------------------
+# HOME
+# ---------------------------
 if menu == "Home":
-    st.title("Análisis Exploratorio de Datos - Telco Customer Churn")
+    st.title("Análisis Exploratorio de Datos – Telco Customer Churn")
 
     st.markdown("""
     ### 📌 Objetivo del proyecto
     Desarrollar una aplicación interactiva en Streamlit para realizar un Análisis Exploratorio
-    de Datos (EDA) sobre el comportamiento de clientes de una empresa de telecomunicaciones,
-    identificando patrones asociados a la fuga de clientes (Churn).
+    de Datos (EDA) del dataset TelcoCustomerChurn.csv, con el fin de identificar patrones
+    asociados a la fuga de clientes (Churn).
 
     ### 👤 Autor
-    **Nombre:** Frank Bellido
+    **Nombre:** Frank Bellido  
     **Curso:** Especialización en Python for Analytics  
     **Docente:** Carlos Carrillo Villavicencio  
     **Año:** 2026
 
     ### 📊 Dataset
-    El dataset **TelcoCustomerChurn.csv** contiene información sobre clientes, servicios
-    contratados, facturación, tiempo de permanencia y estado de churn.
+    Información demográfica, servicios contratados, facturación, permanencia y estado de churn
+    de clientes de una empresa de telecomunicaciones.
 
-    ### 🛠 Tecnologías utilizadas
+    ### 🛠 Tecnologías
     - Python
     - Pandas
     - NumPy
@@ -60,9 +81,11 @@ if menu == "Home":
     - Streamlit
     """)
 
-
+# ---------------------------
+# CARGA DE DATOS
+# ---------------------------
 elif menu == "Carga de Datos":
-    st.subheader("Carga del Dataset")
+    st.title("📂 Carga del Dataset")
 
     archivo = st.file_uploader(
         "Seleccione el archivo TelcoCustomerChurn.csv",
@@ -78,15 +101,17 @@ elif menu == "Carga de Datos":
         st.subheader("Vista previa del dataset")
         st.dataframe(df.head())
 
-        st.subheader("Dimensiones del dataset")
+        st.subheader("Dimensiones")
         st.write(f"Filas: {df.shape[0]}")
         st.write(f"Columnas: {df.shape[1]}")
     else:
-        st.warning("Por favor, cargue un archivo CSV para continuar")
+        st.warning("Debe cargar el dataset para continuar")
 
-
+# ---------------------------
+# EDA
+# ---------------------------
 elif menu == "EDA":
-    st.subheader("Análisis Exploratorio de Datos")
+    st.title("🔍 Análisis Exploratorio de Datos (EDA)")
 
     if "df" not in st.session_state:
         st.warning("Primero debe cargar el dataset")
@@ -96,118 +121,142 @@ elif menu == "EDA":
         numericas, categoricas = analyzer.clasificar_variables()
 
         tabs = st.tabs([
-            "📄 Info general",
-            "📊 Estadísticas",
-            "🔍 Valores faltantes",
-            "📈 Univariado",
-            "🔄 Bivariado",
-            "🧠 Hallazgos"
+            "Ítem 1 – Info general",
+            "Ítem 2 – Clasificación",
+            "Ítem 3 – Estadísticas",
+            "Ítem 4 – Valores faltantes",
+            "Ítem 5 – Distribución numérica",
+            "Ítem 6 – Variables categóricas",
+            "Ítem 7 – Num vs Churn",
+            "Ítem 8 – Cat vs Churn",
+            "Ítem 9 – Análisis dinámico",
+            "Ítem 10 – Hallazgos"
         ])
 
-        # TAB 1 — INFO GENERAL
+        # ÍTEM 1
         with tabs[0]:
             st.subheader("Información general del dataset")
-
-            st.write("Dimensiones:")
-            st.write(df.shape)
-
-            st.dataframe(df.head())
 
             buffer = StringIO()
             df.info(buf=buffer)
             st.text(buffer.getvalue())
 
+        # ÍTEM 2
+        with tabs[1]:
+            st.subheader("Clasificación de variables")
             col1, col2 = st.columns(2)
+
             with col1:
                 st.write("Variables numéricas")
                 st.write(numericas)
+
             with col2:
                 st.write("Variables categóricas")
                 st.write(categoricas)
 
-        # TAB 2 — ESTADÍSTICAS
-        with tabs[1]:
+        # ÍTEM 3
+        with tabs[2]:
             st.subheader("Estadísticas descriptivas")
             st.dataframe(analyzer.estadisticas_descriptivas())
 
-        # TAB 3 — VALORES FALTANTES
-        with tabs[2]:
-            st.subheader("Valores faltantes")
+            var = st.selectbox("Seleccione una variable numérica", numericas)
+            st.write(f"Media: {analyzer.media(var):.2f}")
+            st.write(f"Mediana: {analyzer.mediana(var):.2f}")
+            st.write(f"Moda: {analyzer.moda(var)}")
+
+        # ÍTEM 4
+        with tabs[3]:
+            st.subheader("Análisis de valores faltantes")
             nulos = analyzer.valores_nulos()
             st.dataframe(nulos)
 
-            nulos_filtrados = nulos[nulos > 0]
-            if len(nulos_filtrados) > 0:
-                st.bar_chart(nulos_filtrados)
+            if nulos.sum() > 0:
+                st.bar_chart(nulos[nulos > 0])
             else:
-                st.success("No se encontraron valores faltantes")
+                st.success("No existen valores faltantes")
 
-              # TAB 4 — UNIVARIADO
-        with tabs[3]:
-            st.subheader("Análisis univariado")
+        # ÍTEM 5
+        with tabs[4]:
+            st.subheader("Distribución de variables numéricas")
+            var = st.selectbox("Variable", numericas)
+            bins = st.slider("Bins", 5, 50, 30)
 
-            var_num = st.selectbox("Variable numérica", numericas)
+            fig, ax = plt.subplots()
+            sns.histplot(df[var], bins=bins, ax=ax)
+            st.pyplot(fig)
 
-            bins = st.slider(
-                "Número de bins del histograma",
-                min_value=5,
-                max_value=50,
-                value=30
+        # ÍTEM 6
+        with tabs[5]:
+            st.subheader("Análisis de variables categóricas")
+            var = st.selectbox("Variable categórica", categoricas)
+
+            fig, ax = plt.subplots()
+            sns.countplot(data=df, x=var, ax=ax)
+            ax.tick_params(axis='x', rotation=45)
+            st.pyplot(fig)
+
+        # ÍTEM 7
+        with tabs[6]:
+            st.subheader("Numérico vs Churn")
+            var = st.selectbox("Variable numérica", numericas)
+
+            fig, ax = plt.subplots()
+            sns.boxplot(data=df, x="Churn", y=var, ax=ax)
+            st.pyplot(fig)
+
+        # ÍTEM 8
+        with tabs[7]:
+            st.subheader("Categórico vs Churn")
+            var = st.selectbox("Variable categórica", categoricas)
+
+            fig, ax = plt.subplots()
+            sns.countplot(data=df, x=var, hue="Churn", ax=ax)
+            ax.tick_params(axis='x', rotation=45)
+            st.pyplot(fig)
+
+        # ÍTEM 9
+        with tabs[8]:
+            st.subheader("Análisis dinámico por selección del usuario")
+
+            columnas = st.multiselect(
+                "Seleccione variables numéricas",
+                numericas
             )
 
-            fig, ax = plt.subplots()
-            sns.histplot(df[var_num], bins=bins, ax=ax)
-            st.pyplot(fig)
+            mostrar = st.checkbox("Mostrar estadísticas")
 
-            var_cat = st.selectbox("Variable categórica", categoricas)
-            fig, ax = plt.subplots()
-            sns.countplot(data=df, x=var_cat, ax=ax)
-            ax.tick_params(axis='x', rotation=45)
-            st.pyplot(fig)
+            if columnas and mostrar:
+                st.dataframe(df[columnas].describe())
 
-        # TAB 5 — BIVARIADO
-        with tabs[4]:
-            st.subheader("Análisis bivariado")
+        # ÍTEM 10
+        with tabs[9]:
+            st.subheader("Hallazgos clave")
 
-            var_num = st.selectbox("Numérica vs Churn", numericas)
-            fig, ax = plt.subplots()
-            sns.boxplot(data=df, x="Churn", y=var_num, ax=ax)
-            st.pyplot(fig)
+            churn_prop = df["Churn"].value_counts(normalize=True)
+            st.bar_chart(churn_prop)
 
-            var_cat = st.selectbox("Categórica vs Churn", categoricas)
-            fig, ax = plt.subplots()
-            sns.countplot(data=df, x=var_cat, hue="Churn", ax=ax)
-            ax.tick_params(axis='x', rotation=45)
-            st.pyplot(fig)
-
-        # TAB 6 — HALLAZGOS
-        with tabs[5]:
             st.markdown("""
-            ### Hallazgos clave
-
-            1. El churn se concentra en clientes con baja antigüedad.
-            2. Cargos mensuales altos se asocian a mayor abandono.
-            3. El tipo de contrato influye en la retención.
-            4. Servicios adicionales reducen el churn.
-            5. El EDA permite identificar patrones críticos de negocio.
+            **Insights principales:**
+            - El churn es mayor en clientes con baja antigüedad.
+            - Cargos mensuales altos se asocian a mayor abandono.
+            - Contratos mensuales presentan mayor churn.
+            - Servicios adicionales reducen la fuga.
+            - El EDA permite apoyar decisiones de retención.
             """)
 
-
-
+# ---------------------------
+# CONCLUSIONES
+# ---------------------------
 elif menu == "Conclusiones":
-    st.title("Conclusiones finales del análisis")
+    st.title("📌 Conclusiones finales")
 
     st.markdown("""
-### Conclusiones principales
-
-1. El churn se presenta principalmente en clientes con baja antigüedad, lo que indica que los primeros meses son críticos para la retención.
-2. Los clientes con cargos mensuales más elevados tienden a abandonar el servicio con mayor frecuencia, lo que sugiere una posible percepción negativa del valor del servicio.
-3. La mayoría de los clientes no pertenecen al grupo de adultos mayores, por lo que las estrategias de retención deben enfocarse en el segmento general de clientes.
-4. El churn representa una proporción significativa del total de clientes, lo cual puede generar impactos económicos relevantes considerando el alto costo de adquisición de nuevos clientes.
-5. El análisis exploratorio e interactivo permite identificar patrones clave que pueden apoyar la toma de decisiones estratégicas orientadas a la mejora de la retención de clientes.
-""")
-
-
+    1. Los primeros meses del cliente son críticos para la retención.
+    2. Cargos elevados influyen negativamente en la permanencia.
+    3. El tipo de contrato es una variable clave en el churn.
+    4. Ofrecer servicios adicionales reduce la probabilidad de abandono.
+    5. El análisis exploratorio es fundamental para decisiones estratégicas.
+    """)
 
 
 
