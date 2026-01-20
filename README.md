@@ -1,37 +1,46 @@
 # 📊 Análisis Exploratorio de Datos – Telco Customer Churn
 
 ## 📌 Descripción del proyecto
-Este proyecto consiste en el desarrollo de una aplicación interactiva en Python utilizando Streamlit, orientada al Análisis Exploratorio de Datos (EDA) del dataset TelcoCustomerChurn.csv.  
-El objetivo es identificar patrones asociados a la fuga de clientes (churn), sin construir modelos predictivos, enfocándose en análisis descriptivo y visual.
+Aplicación interactiva desarrollada en **Streamlit** para realizar un Análisis Exploratorio de Datos (EDA)
+sobre el dataset **Telco Customer Churn**, con el objetivo de identificar patrones asociados a la
+fuga de clientes (churn) mediante análisis descriptivo y visual.
+
+No se construyen modelos predictivos; el enfoque es exploratorio e interpretativo.
+
+---
 
 ## 👤 Autor
-- **Nombre:** Frank OFG  
+- **Nombre:** Frank Bellido Marquina  
 - **Curso:** Especialización en Python for Analytics  
 - **Año:** 2026  
 
+---
+
 ## 📂 Dataset
 El dataset contiene información sobre clientes de una empresa de telecomunicaciones, incluyendo:
-- Características demográficas
-- Servicios contratados
-- Facturación
-- Tiempo de permanencia
-- Estado de churn
+
+- Características demográficas  
+- Servicios contratados  
+- Facturación mensual y total  
+- Tiempo de permanencia (tenure)  
+- Estado de churn  
+
+---
 
 ## 🛠️ Tecnologías utilizadas
-- Python
-- Pandas
-- NumPy
-- Matplotlib
-- Seaborn
-- Streamlit
+- Python  
+- Pandas  
+- NumPy  
+- Matplotlib  
+- Seaborn  
+- Streamlit  
+
+---
 
 ## 🚀 Ejecución de la aplicación
 
-1. Clonar el repositorio
-2. Instalar dependencias:
-
+### Opción 1: Ejecutar en local
+```bash
 pip install -r requirements.txt
-
-3. Ejecutar la app:
-
 streamlit run app.py
+
