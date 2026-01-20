@@ -1,46 +1,107 @@
-# 📊 Análisis Exploratorio de Datos – Telco Customer Churn
+# 📊 Telco Customer Churn – Análisis Exploratorio de Datos (EDA)
 
-## 📌 Descripción del proyecto
-Aplicación interactiva desarrollada en **Streamlit** para realizar un Análisis Exploratorio de Datos (EDA)
-sobre el dataset **Telco Customer Churn**, con el objetivo de identificar patrones asociados a la
-fuga de clientes (churn) mediante análisis descriptivo y visual.
+## 📌 Descripción del Proyecto
 
-No se construyen modelos predictivos; el enfoque es exploratorio e interpretativo.
+Este proyecto consiste en el desarrollo de una aplicación interactiva en **Streamlit** para realizar un **Análisis Exploratorio de Datos (EDA)** sobre el dataset **Telco Customer Churn**, con el objetivo de identificar patrones y variables asociadas a la fuga de clientes (*Churn*) en una empresa de telecomunicaciones.
+
+La aplicación permite cargar el dataset, explorar sus variables, visualizar estadísticas y analizar la relación entre distintas variables y el churn de forma dinámica.
 
 ---
 
-## 👤 Autor
-- **Nombre:** Frank Bellido Marquina  
-- **Curso:** Especialización en Python for Analytics  
-- **Año:** 2026  
+## 🎯 Objetivo
+
+Analizar los factores que influyen en la pérdida de clientes mediante técnicas de análisis exploratorio de datos, apoyando la toma de decisiones estratégicas para la retención de clientes.
+
+---
+
+## 🧠 Contenido del Análisis
+
+La aplicación incluye los siguientes módulos:
+
+* Información general del dataset
+* Clasificación de variables numéricas y categóricas
+* Estadísticas descriptivas (media, mediana y moda)
+* Análisis de valores faltantes
+* Distribución de variables numéricas
+* Análisis de variables categóricas
+* Relación entre variables numéricas y churn
+* Relación entre variables categóricas y churn
+* Análisis dinámico interactivo
+* Hallazgos clave y conclusiones
+
+---
+
+## 🛠️ Tecnologías Utilizadas
+
+* Python
+* Pandas
+* NumPy
+* Matplotlib
+* Seaborn
+* Streamlit
+* Git & GitHub
 
 ---
 
 ## 📂 Dataset
-El dataset contiene información sobre clientes de una empresa de telecomunicaciones, incluyendo:
 
-- Características demográficas  
-- Servicios contratados  
-- Facturación mensual y total  
-- Tiempo de permanencia (tenure)  
-- Estado de churn  
+**Nombre:** TelcoCustomerChurn.csv
 
----
+El dataset contiene información sobre:
 
-## 🛠️ Tecnologías utilizadas
-- Python  
-- Pandas  
-- NumPy  
-- Matplotlib  
-- Seaborn  
-- Streamlit  
+* Datos demográficos de clientes
+* Servicios contratados
+* Tipo de contrato
+* Cargos mensuales y totales
+* Antigüedad del cliente
+* Estado de churn (Sí / No)
 
 ---
 
-## 🚀 Ejecución de la aplicación
+## 🚀 Aplicación Desplegada
 
-### Opción 1: Ejecutar en local
+La aplicación se encuentra disponible en el siguiente enlace:
+
+🔗 **Streamlit App:**
+[https://telco-churn-eda-mgbrimympkksmkyuuq7rqv.streamlit.app/](https://telco-churn-eda-mgbrimympkksmkyuuq7rqv.streamlit.app/)
+
+---
+
+## 🖥️ Ejecución Local
+
+Para ejecutar la aplicación en tu entorno local:
+
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
+```
+
+---
+
+## 📸 Capturas de Pantalla
+
+### 🏠 Pantalla Principal
+
+![Home](screenshots/home.png)
+
+### 📂 Carga de Datos
+
+![Carga de Datos](screenshots/carga_datos.png)
+
+### 📊 Análisis Exploratorio
+
+![EDA](screenshots/eda.png)
+
+### 📌 Conclusiones
+
+![Conclusiones](screenshots/conclusiones.png)
+
+---
+
+## 👤 Autor
+
+**Nombre:** Frank Bellido
+**Curso:** Especialización en Python for Analytics
+**Docente:** Carlos Carrillo Villavicencio
+**Año:** 2026
 
